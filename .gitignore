@@ -1,0 +1,31 @@
+# Temporary files:
+.DS_Store
+
+# Dependencies:
+client/lib/
+node_modules
+server/src/src
+
+# Testing files:
+db
+server/src/server
+npm-debug.log*
+mongo-backups/
+
+# Sensitive content:
+server/db-url
+server/token-secret
+
+# Unused files from old repo:
+client/auth
+client/createStory
+client/errorPage
+client/img
+client/library
+client/models
+client/navBar
+client/services
+client/singleStory
+client/splash
+client/test
+karma.conf.js
