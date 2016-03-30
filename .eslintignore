@@ -1,0 +1,8 @@
+.DS_Store
+db/
+server/
+Godeps/
+node_modules/
+client/lib/
+npm-debug.log*
+mongo-backups/
