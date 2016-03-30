@@ -1,0 +1,23 @@
+{
+  "name": "Mithril Keep",
+  "homepage": "https://github.com/GreenRaccoon23/mithril-keep",
+  "authors": [
+    "GreenRaccoon23"
+  ],
+  "description": "Note-taking app written in Mithril",
+  "main": "client/index.html",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.6",
+    "mithril": "^0.2.3",
+    "jquery": "^2.2.2"
+  }
+}
