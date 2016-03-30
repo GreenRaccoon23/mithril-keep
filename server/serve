@@ -1,0 +1,37 @@
+#!/bin/bash
+
+declare basepwd;
+basepwd="$(basename "${PWD}")";
+
+declare dir="";
+if [[ "${basepwd}" == "server" ]]; then
+    dir="bin";
+elif [[ "${basepwd}" == "storyboard" ]]; then
+    dir="server/bin";
+elif [[ "${basepwd}" == "app" ]]; then
+    # For Heroku.
+    [ -d "client/lib" ] || bower install;
+    dir="server/bin";
+elif [[ "${basepwd}" == "bin" ]]; then
+    dir="";
+else
+    echo "Change directory to either 'storyboard' or 'storyboard/server'"
+    exit 1;
+fi;
+
+[ "${dir}" ] &&
+    pushd "${dir}" >/dev/null;
+
+declare os="$(uname -a | awk '{print $1;}')";
+
+if [[ "${os}" == "Linux" ]]; then
+    ./server_linux;
+elif [[ "${os}" == "Darwin" ]]; then
+    ./server_darwin;
+else
+    ./server.exe;
+fi;
+
+if [ -z "${STORYBOARD_DB_URL}" ] && [ -e "../db-url" ]; then
+    export STORYBOARD_DB_URL="$(cat "../db-url")";
+fi;

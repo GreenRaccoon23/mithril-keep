@@ -1,0 +1,163 @@
+#!/bin/bash
+
+# Set console color.
+# Optionally, run a command afterwards, and once the command returns,
+#   reset the console color to normal.
+_c() {
+    local -A Codes=( 
+        ["black"]="0" 
+        ["red"]="1" 
+        ["green"]="2" 
+        ["yellow"]="3" 
+        ["blue"]="4" 
+        ["magenta"]="5" 
+        ["cyan"]="6" 
+        ["white"]="7" 
+    );
+
+    local k c;
+    for k in "${!Codes[@]}"; do
+        [ "${k}" = "${1}" ] &&
+            c="${Codes[$k]}";
+    done;
+
+    [ -n "${c}" ] &&
+        tput setaf "${c}";
+    
+    [ -z "${*:2}" ] &&
+        return;
+
+    eval "${@:2}";
+    tput sgr0;
+}
+
+# Set the console color to bold.
+# Optionally, pass any arguments to function '_c'.
+_C() {
+    tput bold;
+    [ -n "$*" ] &&
+        _c "$@";
+}
+
+# Reset console color to normal.
+_u() {
+    tput sgr0;
+}
+
+# Watch all *.go files in the specified directory
+# Call the restart function when they are saved
+function monitor() {
+  inotifywait -q -m -r -e close_write -e moved_to --exclude '[^g][^o]$' $1 |
+  while read line; do
+    restart
+  done
+}
+
+# Terminate and rerun the main Go program
+function restart {
+  # if [ "$(pgrep -f $PROCESS_NAME)" ]; then
+  #   killall -q -w -9 $PROCESS_NAME
+  # fi
+  local p;
+  for p in "${PROCESS_NAMES[@]}"; do
+    # pkill -f "${p}";
+    killall -q -w -9 "${p}"
+  done;
+
+  _c cyan echo "[godemon] Reloading...";
+  # go run $FILE_PATH $ARGS &
+  ./test-run &
+}
+
+# Make sure all background processes get terminated
+function close {
+  _c cyan echo '[godemon] Stopping...'
+  killall -q -w -9 inotifywait
+  exit 0
+}
+
+trap close SIGINT
+_C cyan echo "[godemon]"
+_c cyan echo "[godemon] Watching directories, CTRL+C to stop"
+
+# FILE_PATH=$1
+# FILE_NAME=$(basename $FILE_PATH)
+# PROCESS_NAME=${FILE_NAME%%.*}
+
+# shift
+# ARGS=$@
+declare basepwd;
+basepwd="$(basename "${PWD}")";
+
+declare -r DIR_TOP="mithril-keep";
+declare -r DIR_MID="server";
+declare -r DIR_LOW="src";
+
+declare dir="";
+
+case "${basepwd}" in
+    "${DIR_TOP}" )
+        dir="${DIR_MID}/${DIR_LOW}";
+        ;;
+    "${DIR_MID}" )
+        dir="${DIR_LOW}";
+        ;;
+    "${DIR_LOW}" )
+        dir="";
+        ;;
+    * )
+        echo "Change directory to either '${DIR_TOP} or '${DIR_TOP}/${DIR_MID}'";
+        exit 1;
+        ;;
+esac;
+
+if [ -n "${dir}" ]; then
+    pushd "${dir}" &>/dev/null;
+fi;
+
+FILES=( $(find . -name '*.go' \( ! -name '*_test.go' \) -printf '%f\n') );
+GORUN_PROCESS_NAME="${FILES[0]%.go*}"
+PROCESS_NAME='test-run'
+PROCESS_NAMES=("${PROCESS_NAME}" "${GORUN_PROCESS_NAME}")
+
+basepwd="$(basename "${PWD}")";
+case "${basepwd}" in
+    "${DIR_TOP}" )
+        dir="${DIR_MID}";
+        ;;
+    "${DIR_MID}" )
+        dir="";
+        ;;
+    "${DIR_LOW}" )
+        dir="..";
+        ;;
+    * )
+        echo "Change directory to either '${DIR_TOP} or '${DIR_TOP}/${DIR_MID}'";
+        exit 1;
+        ;;
+esac;
+
+if [ -n "${dir}" ]; then
+    pushd "${dir}" &>/dev/null;
+fi;
+
+# Start the main Go program
+#go run $FILE_PATH $ARGS &
+./test-run &
+
+# Monitor all /src directories on the GOPATH
+OIFS="$IFS"
+IFS=':'
+for path in $GOPATH
+do
+  monitor $path/src &
+done
+IFS="$OIFS"
+
+# If the current working directory isn't on the GOPATH, monitor it too
+if [[ $PWD != "$GOPATH/"* ]]
+then
+  monitor $PWD
+fi
+
+wait

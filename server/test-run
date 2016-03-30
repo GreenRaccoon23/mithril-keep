@@ -1,0 +1,57 @@
+#!/bin/bash
+
+declare basepwd;
+basepwd="$(basename "${PWD}")";
+
+declare -r DIR_TOP="mithril-keep";
+declare -r DIR_MID="server";
+declare -r DIR_LOW="src";
+
+declare dir="";
+
+case "${basepwd}" in
+    "${DIR_TOP}" )
+        dir="${DIR_MID}/${DIR_LOW}";
+        ;;
+    "${DIR_MID}" )
+        dir="${DIR_LOW}";
+        ;;
+    "${DIR_LOW}" )
+        dir="";
+        ;;
+    * )
+        echo "Change directory to either '${DIR_TOP} or '${DIR_TOP}/${DIR_MID}'";
+        exit 1;
+        ;;
+esac;
+
+if [ -n "${dir}" ]; then
+    pushd "${dir}" &>/dev/null;
+fi;
+
+declare os="$(uname -a | awk '{print $1;}')";
+declare -a files;
+
+case "${os}" in
+    "Linux" )
+        files=($(find . -name '*.go' \( ! -name '*_test.go' \)));
+        ;;
+    "Darwin" )
+        files=($(find . -name '*.go' \( ! -name '*_test.go' \)));
+        ;;
+    * )
+        files=($(find . -name '*.go' \( ! -name '*_test.go' \)));
+        ;;
+esac;
+
+declare fileDbUrl="../db-url";
+if [ -z "${MITHRIL_KEEP_DB_URL}" ] && [ -e "${fileDbUrl}" ]; then
+    export MITHRIL_KEEP_DB_URL="$(cat "${fileDbUrl}")";
+fi;
+
+declare fileTokenSecret="../token-secret";
+if [ -z "${MITHRIL_KEEP_TOKEN_SECRET}" ] && [ -e "${fileTokenSecret}" ]; then
+    export MITHRIL_KEEP_TOKEN_SECRET="$(cat "${fileTokenSecret}")";
+fi;
+
+go run "${files[@]}"
