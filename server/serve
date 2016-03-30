@@ -1,37 +1,74 @@
 #!/bin/bash
 
-declare basepwd;
-basepwd="$(basename "${PWD}")";
+declare -r DIR_TOP="mithril-keep";
+declare -r DIR_MID="server";
+declare -r DIR_LOW="bin";
+declare -r DIR_HEROKU="app";
 
-declare dir="";
-if [[ "${basepwd}" == "server" ]]; then
-    dir="bin";
-elif [[ "${basepwd}" == "storyboard" ]]; then
-    dir="server/bin";
-elif [[ "${basepwd}" == "app" ]]; then
-    # For Heroku.
-    [ -d "client/lib" ] || bower install;
-    dir="server/bin";
-elif [[ "${basepwd}" == "bin" ]]; then
-    dir="";
-else
-    echo "Change directory to either 'storyboard' or 'storyboard/server'"
-    exit 1;
-fi;
+# Move to "${DIR_TOP}/${DIR_MID}/${DIR_LOW}".
+_changeDir() {
+    local basepwd;
+    basepwd="$(basename "${PWD}")";
+    
+    local dir="";
 
-[ "${dir}" ] &&
-    pushd "${dir}" >/dev/null;
+    case "${basepwd}" in
+        "${DIR_TOP}" )
+            dir="${DIR_MID}/${DIR_LOW}";
+            ;;
+        "${DIR_MID}" )
+            dir="${DIR_LOW}";
+            ;;
+        "${DIR_LOW}" )
+            dir="";
+            ;;
+        "${DIR_HEROKU}" )
+            dir="${DIR_MID}/${DIR_LOW}";
+            # Force Heroku to `bower install`.
+            [ -d "client/lib" ] ||
+                bower install;
+            ;;
+        * )
+            echo "Change directory to either '${DIR_TOP} or '${DIR_TOP}/${DIR_MID}'";
+            exit 1;
+            ;;
+    esac;
 
-declare os="$(uname -a | awk '{print $1;}')";
+    if [ -n "${dir}" ]; then
+        pushd "${dir}" &>/dev/null;
+    fi;
+}
 
-if [[ "${os}" == "Linux" ]]; then
-    ./server_linux;
-elif [[ "${os}" == "Darwin" ]]; then
-    ./server_darwin;
-else
-    ./server.exe;
-fi;
+# Set environment variables required by the server.
+_verifyEnvVars() {
+    local fileDbUrl="../db-url";
+    if [ -z "${MITHRIL_KEEP_DB_URL}" ] && [ -e "${fileDbUrl}" ]; then
+        export MITHRIL_KEEP_DB_URL="$(cat "${fileDbUrl}")";
+    fi;
 
-if [ -z "${STORYBOARD_DB_URL}" ] && [ -e "../db-url" ]; then
-    export STORYBOARD_DB_URL="$(cat "../db-url")";
-fi;
+    local fileTokenSecret="../token-secret";
+    if [ -z "${MITHRIL_KEEP_TOKEN_SECRET}" ] && [ -e "${fileTokenSecret}" ]; then
+        export MITHRIL_KEEP_TOKEN_SECRET="$(cat "${fileTokenSecret}")";
+    fi;
+}
+
+# Run binary.
+_serve() {
+    local os;
+    os="$(uname -a | awk '{print $1;}')";
+    case "${os}" in
+        "Linux" )
+            ./server_linux;
+            ;;
+        "Darwin" )
+            ./server_darwin;
+            ;;
+        * )
+            ./server.exe;
+            ;;
+    esac;
+}
+
+_changeDir;
+_verifyEnvVars;
+_serve;

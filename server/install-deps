@@ -14,9 +14,9 @@ _chkGopath() {
     [ ! -e "${file}" ] &&
         file="${HOME}/.bash_profile";
 
-    local msg="Add these lines to your ${file}:"
+    local msg="Add these lines to your ${file}:";
     [ ! -e "${file}" ] &&
-        msg="Add these lines to your Terminal configuration file:"
+        msg="Add these lines to your Terminal configuration file:";
 
     echo "${msg}";
     echo 'export GOPATH=$HOME/go';
