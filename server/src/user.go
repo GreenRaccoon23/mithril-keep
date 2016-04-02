@@ -29,10 +29,10 @@ func getNotes(w http.ResponseWriter, r *http.Request, username string) (error, i
 	url := strings.TrimPrefix(r.URL.Path, baseLocation)
 
 	// Redirect to 'getNote' handler if the request asks for a specific note.
-	requestedSpecificNote := url[0] == "/"
+	requestedSpecificNote := string(url[0]) == "/"
 	if requestedSpecificNote {
 		noteId := url[1:]
-		return getNote(w, r, noteId)
+		return getNote(w, r, username, noteId)
 	}
 
 	// Get user info from the database, using the token in the header.
