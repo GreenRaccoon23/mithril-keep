@@ -22,30 +22,34 @@ var Note = {
       if (!e) return;
       e.preventDefault();
 
-      switch(ctrl.viewState) {
-      case NOTE_VIEW_CLASS_NORMAL:
-        ctrl.viewState = NOTE_VIEW_CLASS_ENHANCED;
-        NoteCollection.viewState = NOTE_VIEW_CLASS_ENHANCED;
-        break;
-      default:
-        if ( !e || e.target.classList[0] !== 'note-wrapper' ) {
-          return;
-        }
-        // Don't redraw yet.
-        m.redraw.strategy("none");
+      NoteEditor.show(note);
 
-        Velocity(e.target, {opacity: 0}, {
-          complete: function() {
-            // After the animation finishes, redraw.
-            m.startComputation();
+      // m.mount(document.getElementsByClassName('notes')[0], NoteEditor, note);
 
-            ctrl.viewState = NOTE_VIEW_CLASS_NORMAL;
-            NoteCollection.viewState = NOTE_VIEW_CLASS_NORMAL;
+      // switch(ctrl.viewState) {
+      // case NOTE_VIEW_CLASS_NORMAL:
+      //   ctrl.viewState = NOTE_VIEW_CLASS_ENHANCED;
+      //   NoteCollection.viewState = NOTE_VIEW_CLASS_ENHANCED;
+      //   break;
+      // default:
+      //   if ( !e || e.target.classList[0] !== 'note-wrapper' ) {
+      //     return;
+      //   }
+      //   // Don't redraw yet.
+      //   m.redraw.strategy("none");
 
-            m.endComputation();
-          }
-        });
-      }
+        // Velocity(e.target, {opacity: 0}, {
+        //   complete: function() {
+        //     // After the animation finishes, redraw.
+        //     m.startComputation();
+
+        //     ctrl.viewState = NOTE_VIEW_CLASS_NORMAL;
+        //     NoteCollection.viewState = NOTE_VIEW_CLASS_NORMAL;
+
+        //     m.endComputation();
+        //   }
+        // });
+      // }
     };
 
     ctrl.saveNote = function(e) {
@@ -79,9 +83,10 @@ var Note = {
     //   });
     // }, 500);
     
-    return (ctrl.viewState === NOTE_VIEW_CLASS_NORMAL)
-      ? viewNormal(ctrl, note)
-      : viewEnhanced(ctrl, note);
+    // return (ctrl.viewState === NOTE_VIEW_CLASS_NORMAL)
+    //   ? viewNormal(ctrl, note)
+    //   : viewEnhanced(ctrl, note);
+    return viewNormal(ctrl, note);
     
     function viewNormal(ctrl, note) {
       // return m('.note-wrapper.note-wrapper-' + ctrl.viewState, [

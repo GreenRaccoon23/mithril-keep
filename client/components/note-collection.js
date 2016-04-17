@@ -6,6 +6,8 @@ const NOTE_VIEW_CLASS_ENHANCED = 'enhanced';
 var NoteCollection = {
   viewState: NOTE_VIEW_CLASS_NORMAL,
 
+  noteEditing: null,
+
   controller: function() {
     var ctrl = this;
 
@@ -183,7 +185,13 @@ var NoteCollection = {
         ]
       }
     ];
+
+    NoteCollection.noteEditing = NoteCollection.noteEditing || ctrl.notes[0];
+    // NoteEditor.note = NoteEditor.note || ctrl.notes[0];
+    NoteEditor.setNote(ctrl.notes[0]);
+
     ctrl.notes.forEach(function(note, i) {
+      note.id = note.id || i;
       note.title = i + ' ' + note.title;
     });
   },
@@ -197,11 +205,12 @@ var NoteCollection = {
     // const ENTER = 13;
     // onkeyup: e.shiftKey bool, e.keyCode int
     return m('.notes-container.notes-container-' + NoteCollection.viewState, [
-      m('.notes',
+      m('.notes', [
         ctrl.notes.map(function(note) {
           return m.component(Note, note);
-        })
-      )
+        }),
+        m.component(NoteEditor, NoteCollection.noteEditing)
+      ])
     ]);
   }
 };
