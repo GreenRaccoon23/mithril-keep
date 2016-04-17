@@ -1,5 +1,5 @@
 var Checkbox = Checkbox || {};
-var Velocity = Velocity || {};
+var Velocity = Velocity;
 
 var NoteEditor = {
   note: null,
