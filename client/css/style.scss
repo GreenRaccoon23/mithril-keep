@@ -558,7 +558,8 @@ ul {
         margin-right: 50%;
         transform: translate(-50%, -50%);
 
-        overflow: hidden;
+        // overflow: hidden;
+        overflow: auto;
         @include pop-out();
 
         .note-interior {
@@ -572,16 +573,19 @@ ul {
             }
 
             .note-items {
+              width: 100%;
               .note-text-editable {
                 @include box-sizing(border-box);
                 display: block;
                 border: 0;
-                width: $note-width - ($note-padding * 2);
+                // width: $note-width - ($note-padding * 2);
+                width: 100%;
                 min-height: 1em;
                 max-height: $note-width - ($note-padding * 2);
                 resize: none;
                 word-wrap: break-word;
-                overflow: hidden;
+                // overflow: hidden;
+                overflow: auto;
                 outline: none;
 
                 color: $note-color-text;
