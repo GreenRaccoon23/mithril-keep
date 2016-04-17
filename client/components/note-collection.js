@@ -1,6 +1,11 @@
 var Note = Note || {};
 
+const NOTE_VIEW_CLASS_NORMAL = 'normal';
+const NOTE_VIEW_CLASS_ENHANCED = 'enhanced';
+
 var NoteCollection = {
+  viewState: NOTE_VIEW_CLASS_NORMAL,
+
   controller: function() {
     var ctrl = this;
 
@@ -11,10 +16,13 @@ var NoteCollection = {
         isChecklist: false,
         items: [
           {
-            text: 'Here is some text for a note.'
+            text: `Here is some text for a note.\nThis note has another paragraph.`
           },
           {
-            text: 'This note has another paragraph.'
+            text: `and another`
+          },
+          {
+            text: `and\nsome\nmore\nextra\nparagraphs`
           }
         ]
       },
@@ -46,7 +54,13 @@ var NoteCollection = {
           },
           {
             checkboxState: 'unchecked',
-            text: 'C'
+            text: 'C',
+            items: [
+              {
+                checkboxState: 'checked',
+                text: '1'
+              }
+            ]
           }
         ]
       },
@@ -182,8 +196,8 @@ var NoteCollection = {
     // ]);
     // const ENTER = 13;
     // onkeyup: e.shiftKey bool, e.keyCode int
-    return m('#notes-container', [
-      m('#notes',
+    return m('.notes-container.notes-container-' + NoteCollection.viewState, [
+      m('.notes',
         ctrl.notes.map(function(note) {
           return m.component(Note, note);
         })
