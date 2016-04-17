@@ -171,6 +171,22 @@ $note-color-text: map-get($colors, "grey8");
   -o-padding-end: 0;
 }
 
+@mixin margin-before($margin) {
+  -webkit-margin-before: $margin;
+  -moz-margin-before: $margin;
+  -ms-margin-before: $margin;
+  -o-margin-before: $margin;
+  margin-before: $margin;
+}
+
+@mixin margin-after($margin) {
+  -webkit-margin-after: $margin;
+  -moz-margin-after: $margin;
+  -ms-margin-after: $margin;
+  -o-margin-after: $margin;
+  margin-after: $margin;
+}
+
 @mixin border-radius($radius) {
   -moz-border-radius: $radius;
   -webkit-border-radius: $radius;
@@ -536,16 +552,16 @@ ul {
         display: inline-block;
 
         @include box-sizing(border-box);
-        margin: 0;
-
         $note-padding: 1em;
+        $note-width: 35em;
+        $note-width-min: 18em;
+
+        margin: 0;
         padding: $note-padding;
 
-        $note-width-min: 18em;
         min-width: $note-width-min;
         min-height: $note-width-min;
 
-        $note-width: 35em;
         width: $note-width;
         height: $note-width;
 
@@ -566,20 +582,42 @@ ul {
           display: table;
           width: 100%;
           height: 100%;
+          $note-button-size: 1.15em;
 
           .note-content {
-            .note-title {
+            height: 100%;
+            width: 100;
 
+            $title-height: 1em;
+            $title-font-size: 1.3;
+            // $title-margin-vertical: .7em;
+            $title-margin-vertical: 0;
+            $title-margin-before-after: 1.33em;
+            // $title-margin-before-after: 0;
+            $title-margin-total: ( ($title-margin-vertical * $title-font-size) * 2) + ( ($title-margin-before-after * $title-font-size) * 2);
+            $title-size: ($title-height * $title-font-size) + $title-font-size + $title-margin-total;
+
+            .note-title {
+              font-size: #{$title-font-size}em;
+              @include margin-vertical($title-margin-vertical);
+              @include margin-before($title-margin-before-after);
+              @include margin-after($title-margin-before-after);
+              height: $title-height;
             }
 
             .note-items {
               width: 100%;
+              height: 100%;
+              // position: absolute;
+
               .note-text-editable {
                 @include box-sizing(border-box);
                 display: block;
                 border: 0;
                 // width: $note-width - ($note-padding * 2);
                 width: 100%;
+                // height: 100%;
+                height: $note-width - ($note-padding * 2) - $title-size - $note-button-size;
                 min-height: 1em;
                 max-height: $note-width - ($note-padding * 2);
                 resize: none;
@@ -604,7 +642,7 @@ ul {
           .note-buttons {
             vertical-align: bottom;
             display: table-row;
-            height: 1em;
+            height: $note-button-size;
 
             .note-done {
               float: right;
