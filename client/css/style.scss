@@ -14,7 +14,6 @@ $checkbox-size: $checkbox-width + $checkbox-margin-right;
 
 $note-padding: 1rem;
 
-
 $colors: (
   "red": #F44336,
   "pink": #E91E63,
@@ -49,6 +48,9 @@ $colors: (
   "whitish": #FAFAFA,
   "light-grey": #E9E9E9,
 );
+
+$note-color-background: map-get($colors, "grey1");
+$note-color-text: map-get($colors, "grey8");
 
 // Directives
 
@@ -193,13 +195,12 @@ $colors: (
   box-sizing: $type;
 }
 
-@mixin flex() {
-  display: -webkit-flexbox;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
-  display: flex;
+@mixin flex($type: flex) {
+  display: -webkit-#{$type};
+  display: -moz-#{$type};
+  display: -ms-#{$type};
+  display: -o-#{$type};
+  display: #{$type};
 }
 
 @mixin pop-out($background-color: map-get($colors, "grey1"), $shadow-color: rgba(map-get($colors, "grey4"), .54), $shadow-length: 4px) {
@@ -224,14 +225,13 @@ $colors: (
 }
 
 @mixin flex-organize-into-rows() {
-  @include flex();
+  @include flex(inline-flex);
   flex-direction: row;
   flex: 1;
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: center;
   align-self: flex-start;
-  display: flex;
 }
 
 @mixin center-contents() {
@@ -247,7 +247,7 @@ $colors: (
 }
 
 @mixin align-contents-bottom() {
-  @include flex();
+  @include flex(inline-flex);
   align-items: flex-end;
   align-content: flex-start;
   justify-content: flex-start;
@@ -408,7 +408,7 @@ ul {
   // position: relative;
 }
 
-#notes-container {
+.notes-container {
   @include box-sizing(border-box);
   padding: 0;
   @include padding-horizontal($note-padding);
@@ -416,7 +416,7 @@ ul {
   // max-width: 95vw;
   @include margin-horizontal(auto);
   
-  #notes {
+  .notes {
     @include box-sizing(border-box);
     padding: 0;
     width: 100%;
@@ -424,7 +424,7 @@ ul {
     @include margin-horizontal(auto);
 
     // display: inline-block;
-    // position: relative;
+    position: relative;
     // width: 90vw;
     @include flex-organize-into-rows();
     
@@ -508,8 +508,237 @@ ul {
         }
       }
     }
+
+    .note-wrapper-enhanced {
+      @include box-sizing(border-box);
+      margin: 0;
+      padding: $note-padding;
+      display: inline-flex;
+      // float: left;
+      position: fixed;
+      z-index: 1;
+      // left: 50%;
+      // margin-right: 50%;
+      // transform: translate(-50%, 0);
+      // max-width: 100%;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(map-get($colors, "grey5"), .54);
+
+      transition-property: background-color;
+      transition-duration: 10s;
+      transition-delay: .5s;
+      transition-timing-function: ease-in-out;
+
+      .note-container {
+        display: inline-block;
+
+        @include box-sizing(border-box);
+        margin: 0;
+
+        $note-padding: 1em;
+        padding: $note-padding;
+
+        $note-width-min: 18em;
+        min-width: $note-width-min;
+        min-height: $note-width-min;
+
+        $note-width: 35em;
+        width: $note-width;
+        height: $note-width;
+
+        max-width: 100%;
+        max-height: 100%;
+
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-right: 50%;
+        transform: translate(-50%, -50%);
+
+        overflow: hidden;
+        @include pop-out();
+
+        .note-interior {
+          display: table;
+          width: 100%;
+          height: 100%;
+
+          .note-content {
+            .note-title {
+
+            }
+
+            .note-items {
+              .note-text-editable {
+                @include box-sizing(border-box);
+                display: block;
+                border: 0;
+                width: $note-width - ($note-padding * 2);
+                min-height: 1em;
+                max-height: $note-width - ($note-padding * 2);
+                resize: none;
+                word-wrap: break-word;
+                overflow: hidden;
+                outline: none;
+
+                color: $note-color-text;
+                background-color: $note-color-background;
+
+                &:focus {
+                  background-color: $note-color-background;
+                  color: $note-color-text;
+                  border: 0;
+                  outline: none;
+                }
+              }
+            }
+          }
+
+          .note-buttons {
+            vertical-align: bottom;
+            display: table-row;
+            height: 1em;
+
+            .note-done {
+              float: right;
+              font-size: 1.15em;
+              width: auto;
+              height: auto;
+              background: map-get($colors, "green");
+              fill: map-get($colors, "green");
+              color: map-get($colors, "grey1");
+              border: 0;
+              @include pop-out(map-get($colors, "green"), rgba(map-get($colors, "grey4"), .54));
+            }
+          }
+        }
+      }
+    }
+
   }
 }
+
+// .notes-container-enhanced {
+//   @include box-sizing(border-box);
+//   padding: 0;
+//   @include padding-horizontal($note-padding);
+//   width: 100%;
+//   // max-width: 95vw;
+//   @include margin-horizontal(auto);
+  
+//   .notes {
+//     @include box-sizing(border-box);
+//     padding: 0;
+//     width: 100%;
+//     // max-width: ($note-padding + 20rem) * 4;
+//     @include margin-horizontal(auto);
+
+//     // display: inline-block;
+//     position: relative;
+//     // width: 90vw;
+//     @include flex-organize-into-rows();
+//     // justify-content: flex-start;
+    
+//     // @include masonry(4, 0);
+//     // display: flex;
+//     // align-items: left;
+//     // justify-content: left;
+//     // flex-direction: row;
+//     // flex-wrap: wrap;
+//     // flex-flow: row wrap;
+//     // align-content: flex-end;
+//     // .grid-item {
+//     //   width: 100%;
+//     // }
+
+//     // .note-sizer {
+//     //   width: 20rem;
+//     // }
+
+//   .note-wrapper-enhanced {
+//       @include box-sizing(border-box);
+//       margin: 0;
+//       padding: $note-padding;
+//       display: inline-flex;
+//       float: left;
+//       position: absolute;
+//       z-index: 1;
+//       // vertical-align: top;
+//       // overflow: hidden;
+//       // width: 20rem;
+//       // height: auto;
+//       // max-width: 45vw;
+//       // position: absolute;
+//       // -webkit-column-break-inside: avoid;
+//       // break-inside: avoid;
+
+//       .note-container {
+//         display: inline-block;
+
+//         @include box-sizing(border-box);
+//         margin: 0;
+//         padding: 1em;
+//         $note-width: 18em;
+//         min-width: $note-width;
+//         min-height: $note-width;
+//         // width: 50vw;
+//         // height: 50vh;
+//         width: 45vw;
+//         height: 45vh;
+
+//         overflow: hidden;
+//         @include pop-out();
+
+//         .note-interior {
+//           @include box-sizing(border-box);
+//           margin: 0;
+//           padding: 0;
+//           height: 100%;
+//           overflow: hidden;
+//           display: table;
+
+//           .note-buttons {
+//             vertical-align: bottom;
+//             display: table-row;
+//             height: 1em;
+
+//             .note-done {
+//               float: right;
+//             }
+//           }
+
+//           .note-content {
+//             @include box-sizing(border-box);
+//             display: inline-block;
+//             margin: 0;
+//             padding: 0;
+//             height: 100%;
+//             // min-height: 5em;
+
+//             .note-title {
+
+//             }
+
+//             .note-items {
+//               margin-left: $checkbox-size;
+//               text-overflow: ellipsis;
+
+//               .note-text {
+//               }
+//             }
+
+//             > .note-items {
+//               margin-left: 0;
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
 
 @each $color-name, $color-hex in $colors {
   .background-#{$color-name} {
