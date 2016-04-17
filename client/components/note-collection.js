@@ -125,6 +125,15 @@ var NoteCollection = {
         isChecklist: false,
       },
       {
+        title: 'Long Paragraph',
+        isChecklist: false,
+        items: [
+          {
+            text: 'This is a really long paragraph about nothing.\n\n\nThere is absolutely no point to reading it.\n\n\nSerioulsy, there\'s no point.\n\n\nWhy are you still reading this?\n\n\nYou should stop.\n\n\nYou\'re wasting your time. You\'re just going to get to the end of this paragraph and be disappointed.\n\n\nStill reading? Why? Do you think I\m lying? Or are you trying to prove me wrong? Well take this!'
+          }
+        ]
+      },
+      {
         title: 'A Medium Note',
         isChecklist: false,
         items: [
