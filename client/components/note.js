@@ -130,7 +130,7 @@ var Note = {
                   // ? (item.text + '...')
                   // : item.text
                   ? rowIndex + ' ' + (line + '...')
-                  : rowIndex + ' ' + line
+                  : rowIndex + ' ' + line.substring(0, 200)
               )
             }),
             (item.items) ? item.items.map(viewItemNormal) : ''
