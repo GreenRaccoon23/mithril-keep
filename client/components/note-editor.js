@@ -23,6 +23,7 @@ var NoteEditor = {
       if (!e) return;
       e.preventDefault();
 
+      // This should never happen anyway:
       if ( ! e.target || ! e.target.classList ) return;
 
       var el;
@@ -31,7 +32,8 @@ var NoteEditor = {
         el = e.target;
         break;
       case 'note-done':
-        el = $('button.note-wrapper-enhanced');
+        el = $('.note-wrapper-enhanced');
+      console.log('el:', el);
         break;
       default:
         return;
@@ -63,7 +65,7 @@ var NoteEditor = {
       // }).then(function(res) {
       //     NoteEditor.hide();
       //   });
-      ctrl.hide();
+      ctrl.hide(e);
     };
   },
 
@@ -92,9 +94,9 @@ var NoteEditor = {
           onchange: function(e) {
             e.preventDefault();
             item.text = e.currentTarget.value;
-          },
-          config: initEl(autoResizeTextarea),
-          onkeyup: editEl(autoResizeTextarea)
+          }
+          // config: initEl(autoResizeTextarea),
+          // onkeyup: editEl(autoResizeTextarea)
           // onkeyup: autoResizeTextarea
           // config: function(el) {
           //   // console.log('el:', el);
